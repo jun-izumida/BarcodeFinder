@@ -9,12 +9,31 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    @IBOutlet weak var targetText: UITextView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let dest = segue.destination as!  ReaderViewController
+        
+        switch segue.identifier {
+        case kSegueIdentifier.PREPARE.rawValue:
+            break
+        case kSegueIdentifier.FINDER.rawValue:
+            let targetTextArray = targetText.text.components(separatedBy: .newlines).filter { !$0.isEmpty }
+            dest.targets = Set(targetTextArray)
+            break
+        default:
+            break
+        }
+    }
 
-
+    @IBAction func handleActionScan(_ sender: Any) {
+        performSegue(withIdentifier: kSegueIdentifier.FINDER.rawValue, sender: self)
+    }
+    
 }
 

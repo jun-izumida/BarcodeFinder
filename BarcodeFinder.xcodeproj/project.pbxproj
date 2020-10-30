@@ -13,6 +13,8 @@
 		BF84B61B254C3E73005C57E6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BF84B619254C3E73005C57E6 /* Main.storyboard */; };
 		BF84B61D254C3E75005C57E6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF84B61C254C3E75005C57E6 /* Assets.xcassets */; };
 		BF84B620254C3E75005C57E6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BF84B61E254C3E75005C57E6 /* LaunchScreen.storyboard */; };
+		BF84B628254C3E9A005C57E6 /* ReaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF84B627254C3E9A005C57E6 /* ReaderViewController.swift */; };
+		BF84B62A254C4659005C57E6 /* ConstVariables.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF84B629254C4659005C57E6 /* ConstVariables.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		BF84B61C254C3E75005C57E6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BF84B61F254C3E75005C57E6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BF84B621254C3E75005C57E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BF84B627254C3E9A005C57E6 /* ReaderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderViewController.swift; sourceTree = "<group>"; };
+		BF84B629254C4659005C57E6 /* ConstVariables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstVariables.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,10 +63,12 @@
 				BF84B613254C3E73005C57E6 /* AppDelegate.swift */,
 				BF84B615254C3E73005C57E6 /* SceneDelegate.swift */,
 				BF84B617254C3E73005C57E6 /* ViewController.swift */,
+				BF84B627254C3E9A005C57E6 /* ReaderViewController.swift */,
 				BF84B619254C3E73005C57E6 /* Main.storyboard */,
 				BF84B61C254C3E75005C57E6 /* Assets.xcassets */,
 				BF84B61E254C3E75005C57E6 /* LaunchScreen.storyboard */,
 				BF84B621254C3E75005C57E6 /* Info.plist */,
+				BF84B629254C4659005C57E6 /* ConstVariables.swift */,
 			);
 			path = BarcodeFinder;
 			sourceTree = "<group>";
@@ -141,6 +147,8 @@
 				BF84B618254C3E73005C57E6 /* ViewController.swift in Sources */,
 				BF84B614254C3E73005C57E6 /* AppDelegate.swift in Sources */,
 				BF84B616254C3E73005C57E6 /* SceneDelegate.swift in Sources */,
+				BF84B628254C3E9A005C57E6 /* ReaderViewController.swift in Sources */,
+				BF84B62A254C4659005C57E6 /* ConstVariables.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
