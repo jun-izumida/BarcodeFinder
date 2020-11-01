@@ -10,7 +10,12 @@ import UIKit
 import AVFoundation
 import AudioToolbox
 
+protocol ReaderViewControllerDelegate {
+    func didFinishReader(tag:String, codes:[String])
+}
+
 class ReaderViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
+    var delegate:ReaderViewControllerDelegate?
     var targets:Set<String> = []
     var segueIdentifier:String = ""
     var captureSession: AVCaptureSession!
@@ -52,16 +57,22 @@ class ReaderViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
             
             switch segueIdentifier {
             case kSegueIdentifier.PREPARE.rawValue:
+                let symbol = self.previewLayer.transformedMetadataObject(for: readableObject) as! AVMetadataMachineReadableCodeObject
+                if targets.contains(stringValue) {
+                     markers.addSubview(self.marker(frame: symbol.bounds, isFill:true))
+                 } else {
+                     markers.addSubview(self.marker(frame: symbol.bounds, isFill:false))
+                 }
                 break
             case kSegueIdentifier.FINDER.rawValue:
                 let symbol = self.previewLayer.transformedMetadataObject(for: readableObject) as! AVMetadataMachineReadableCodeObject
                 
                 if targets.contains(stringValue) {
-                    markers.addSubview(self.marker(frame: symbol.bounds, isFill:true))
+                    markers.addSubview(self.marker(frame: symbol.bounds, color:UIColor.red, isFill:true))
                     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
                     AudioServicesPlaySystemSound(1108)
                 } else {
-                    markers.addSubview(self.marker(frame: symbol.bounds, isFill:false))
+                    markers.addSubview(self.marker(frame: symbol.bounds, color:UIColor.gray, isFill:false))
                 }
                 break
             default:
@@ -72,14 +83,14 @@ class ReaderViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
         }
     }
 
-    func marker(frame: CGRect, isFill:Bool) -> UIView! {
+    func marker(frame: CGRect, color:UIColor = UIColor.green, isFill:Bool = true) -> UIView! {
         let v = UIView()
         if isFill {
             v.layer.backgroundColor = UIColor.green.cgColor
             v.alpha = 0.5
         }
         v.layer.borderWidth = 2.0
-        v.layer.borderColor = UIColor.green.cgColor
+        v.layer.borderColor = color.cgColor
         v.frame = frame
         return v
     }
@@ -109,6 +120,11 @@ class ReaderViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
             captureSession.addOutput(metaDataOutput)
             metaDataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
             metaDataOutput.metadataObjectTypes = [.qr]
+            UIGraphicsBeginImageContextWithOptions(UIScreen.main.bounds.size, false, 0.0)
+            self.view.drawHierarchy(in: self.view.bounds, afterScreenUpdates: true)
+            let image:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+            UIGraphicsEndImageContext()
+            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
         } else {
             failed()
             return
@@ -160,6 +176,24 @@ class ReaderViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
  */
     }
     
+    func setupOverlayControl() {
+        let cancelButton:UIButton = UIButton(frame: CGRect(x: view.bounds.width - 65 , y: 10, width: 60, height: 60))
+        //cancelButton.setImage(UIImage(named: "Close"), for: .normal)
+        cancelButton.setTitle("x", for: .normal)
+        cancelButton.backgroundColor = UIColor.orange
+        cancelButton.addTarget(self, action: #selector(self.handleClose(sender:)), for: .touchUpInside)
+        self.view.addSubview(cancelButton)
+        
+        if self.segueIdentifier == kSegueIdentifier.PREPARE.rawValue {
+            let doneButton:UIButton = UIButton(frame: CGRect(x: view.bounds.width - 65 , y: view.bounds.height - 80, width: 60, height: 60))
+            //doneButton.setImage(UIImage(named: "Done"), for: .normal)
+            doneButton.setTitle("OK", for: .normal)
+            doneButton.backgroundColor = UIColor.blue
+            doneButton.addTarget(self, action: #selector(self.handleDone(sender:)), for: .touchUpInside)
+            self.view.addSubview(doneButton)
+        }
+    }
+    
     func transformOrientation(orientation: UIInterfaceOrientation) -> AVCaptureVideoOrientation {
         switch orientation {
         case .landscapeLeft:
@@ -206,5 +240,20 @@ class ReaderViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
         ac.addAction(UIAlertAction(title: "Close", style: .default))
         present(ac, animated: true)
         captureSession = nil
+    }
+    
+    @objc func handleDone(sender:Any?) {
+        self.delegate?.didFinishReader(tag: self.segueIdentifier, codes: Array(self.targets))
+    }
+    
+    @objc func handleClose(sender:Any?) {
+        if (self.captureSession.isRunning == true) {
+            self.captureSession.stopRunning()
+        }
+        if self.presentingViewController is UINavigationController {
+            self.dismiss(animated: true, completion: nil)
+        } else {
+            self.navigationController?.popViewController(animated: true)
+        }
     }
 }
