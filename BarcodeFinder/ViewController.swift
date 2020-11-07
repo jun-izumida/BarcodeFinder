@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController, ReaderViewControllerDelegate {
+class ViewController: UIViewController, UITextViewDelegate, ReaderViewControllerDelegate {
     @IBOutlet weak var targetText: UITextView!
     
     override func viewDidLoad() {
@@ -21,9 +21,11 @@ class ViewController: UIViewController, ReaderViewControllerDelegate {
         
         switch segue.identifier {
         case kSegueIdentifier.PREPARE.rawValue:
+            dest.segueIdentifier = kSegueIdentifier.PREPARE.rawValue
             dest.delegate = self
             break
         case kSegueIdentifier.FINDER.rawValue:
+            dest.segueIdentifier = kSegueIdentifier.FINDER.rawValue
             let targetTextArray = targetText.text.components(separatedBy: .newlines).filter { !$0.isEmpty }
             dest.targets = Set(targetTextArray)
             dest.delegate = self
@@ -32,8 +34,9 @@ class ViewController: UIViewController, ReaderViewControllerDelegate {
             break
         }
     }
-
+    
     func didFinishReader(tag: String, codes: [String]) {
+        print(codes)
         switch tag {
         case kSegueIdentifier.PREPARE.rawValue:
             self.targetText.text = codes.joined(separator: "\n")
@@ -43,6 +46,11 @@ class ViewController: UIViewController, ReaderViewControllerDelegate {
         default:
             break
         }
+    }
+    
+    
+    @IBAction func handleActionPrepareScan(_ sender: Any) {
+        performSegue(withIdentifier: kSegueIdentifier.PREPARE.rawValue, sender: self)
     }
     
     @IBAction func handleActionScan(_ sender: Any) {

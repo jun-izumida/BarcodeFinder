@@ -14,21 +14,75 @@ protocol ReaderViewControllerDelegate {
     func didFinishReader(tag:String, codes:[String])
 }
 
-class ReaderViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
+class ReaderViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, AVCaptureMetadataOutputObjectsDelegate {
+    
+    @IBOutlet weak var collectionView: UICollectionView!
+    
     var delegate:ReaderViewControllerDelegate?
     var targets:Set<String> = []
+    var match:Set<String> = []
+    var savedImages:[UIImage] = []
     var segueIdentifier:String = ""
     var captureSession: AVCaptureSession!
     var previewLayer: AVCaptureVideoPreviewLayer!
-    var markers: UIView!
+    var markers: UIView! = UIView()
+    var isPlaying:Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        self.startReading()
     }
     
+    override func viewWillLayoutSubviews() {
+        self.setupOverlayControl()
+        self.videoPreviewLayerOrientation()
+        //self.view.bringSubviewToFront(collectionView)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if (self.captureSession.isRunning == false) {
+            self.captureSession.startRunning()
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if (self.captureSession.isRunning == true) {
+            self.captureSession.stopRunning()
+        }
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        
+        coordinator.animateAlongsideTransition(in: nil) { (animation) in
+        } completion: { (UIViewControllerTransitionCoordinatorContext) in
+            self.videoPreviewLayerOrientation()
+        }
 
+    }
+        
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        print("ABC")
+        view.endEditing(true)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return savedImages.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+        
+        let img = cell.viewWithTag(1) as! UIImageView
+        img
+            .image = savedImages[indexPath.row]
+        return cell
+    }
+    
     /*
     // MARK: - Navigation
 
@@ -48,31 +102,46 @@ class ReaderViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
         for obj in metadataObjects {
             guard let readableObject = obj as? AVMetadataMachineReadableCodeObject else { continue }
             guard let stringValue = readableObject.stringValue else { continue }
-            
-            if markers.superview != nil {
-                markers.removeFromSuperview()
-            }
-            markers = UIView()
-            markers.backgroundColor = .clear
-            
+                        
             switch segueIdentifier {
             case kSegueIdentifier.PREPARE.rawValue:
                 let symbol = self.previewLayer.transformedMetadataObject(for: readableObject) as! AVMetadataMachineReadableCodeObject
                 if targets.contains(stringValue) {
-                     markers.addSubview(self.marker(frame: symbol.bounds, isFill:true))
+                    markers.addSubview(self.marker(value: stringValue, frame: symbol.bounds, isFill:true))
                  } else {
-                     markers.addSubview(self.marker(frame: symbol.bounds, isFill:false))
+                    markers.addSubview(self.marker(value: stringValue, frame: symbol.bounds, isFill:false))
+                    targets.insert(stringValue)
                  }
                 break
             case kSegueIdentifier.FINDER.rawValue:
                 let symbol = self.previewLayer.transformedMetadataObject(for: readableObject) as! AVMetadataMachineReadableCodeObject
                 
                 if targets.contains(stringValue) {
-                    markers.addSubview(self.marker(frame: symbol.bounds, color:UIColor.red, isFill:true))
-                    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-                    AudioServicesPlaySystemSound(1108)
+                    markers.addSubview(self.marker(value: stringValue, frame: symbol.bounds, color:UIColor.red, isFill:true))
+                    if !self.isPlaying {
+                        self.isPlaying = true
+                        AudioServicesPlaySystemSoundWithCompletion(kSystemSoundID_Vibrate) {
+                            AudioServicesPlaySystemSoundWithCompletion(1003) {
+                                self.isPlaying = false
+                            }
+                        }
+                    }
+                    //AudioServicesPlaySystemSound(1108)
+
+                    if !match.contains(stringValue) {
+                        match.insert(stringValue)
+                        /*
+                        UIGraphicsBeginImageContextWithOptions(UIScreen.main.bounds.size, false, 0.0)
+                        self.view.drawHierarchy(in: self.view.bounds, afterScreenUpdates: true)
+                        let image:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+                        UIGraphicsEndImageContext()
+                        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                        savedImages.append(image)
+                        self.collectionView.reloadData()
+                        */
+                    }
                 } else {
-                    markers.addSubview(self.marker(frame: symbol.bounds, color:UIColor.gray, isFill:false))
+                    markers.addSubview(self.marker(value: stringValue, frame: symbol.bounds, color:UIColor.gray, isFill:true))
                 }
                 break
             default:
@@ -83,16 +152,35 @@ class ReaderViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
         }
     }
 
-    func marker(frame: CGRect, color:UIColor = UIColor.green, isFill:Bool = true) -> UIView! {
-        let v = UIView()
+    func marker(value: String, frame: CGRect, color:UIColor = UIColor.green, isFill:Bool = true) -> UIView! {
+        let offset = frame.origin.x - ((300 - frame.width) / 2)
+        let marker: UIView = UIView(frame:
+                                        CGRect(
+                                            x: offset,
+                                            y: frame.origin.y,
+                                            width: 300,
+                                            height: frame.height + 20))
+        marker.backgroundColor = UIColor.clear
+        
+ //       let v = UIView()
+        let v = UIView(frame: CGRect(origin: CGPoint(x: ((300 - frame.width) / 2), y: 0), size: CGSize(width: frame.width, height: frame.height)))
         if isFill {
-            v.layer.backgroundColor = UIColor.green.cgColor
+            v.layer.backgroundColor = color.cgColor
             v.alpha = 0.5
         }
         v.layer.borderWidth = 2.0
         v.layer.borderColor = color.cgColor
-        v.frame = frame
-        return v
+//        v.frame = frame
+
+        let l = UILabel(frame: CGRect(origin: CGPoint(x: 0, y: frame.height), size: CGSize(width: 300, height: 20)))
+        l.text = value
+        l.textAlignment = NSTextAlignment.center
+        l.tintColor = color
+        
+        marker.addSubview(v)
+        marker.addSubview(l)
+        
+        return marker
     }
     
     func startReading() {
@@ -120,11 +208,13 @@ class ReaderViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
             captureSession.addOutput(metaDataOutput)
             metaDataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
             metaDataOutput.metadataObjectTypes = [.qr]
+            /*
             UIGraphicsBeginImageContextWithOptions(UIScreen.main.bounds.size, false, 0.0)
             self.view.drawHierarchy(in: self.view.bounds, afterScreenUpdates: true)
             let image:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
             UIGraphicsEndImageContext()
             UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+            */
         } else {
             failed()
             return
@@ -185,7 +275,7 @@ class ReaderViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
         self.view.addSubview(cancelButton)
         
         if self.segueIdentifier == kSegueIdentifier.PREPARE.rawValue {
-            let doneButton:UIButton = UIButton(frame: CGRect(x: view.bounds.width - 65 , y: view.bounds.height - 80, width: 60, height: 60))
+            let doneButton:UIButton = UIButton(frame: CGRect(x: view.bounds.width - 65 , y: view.bounds.height - 180, width: 60, height: 60))
             //doneButton.setImage(UIImage(named: "Done"), for: .normal)
             doneButton.setTitle("OK", for: .normal)
             doneButton.backgroundColor = UIColor.blue
@@ -231,7 +321,7 @@ class ReaderViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
             }
         }
         if let orientation = self.convertUIOrientation2VideoOrientation(f: { return ifOrientation() }) {
-            self.previewLayer.connection?.videoOrientation = orientation
+//            self.previewLayer.connection?.videoOrientation = orientation
         }
     }
     
@@ -244,6 +334,7 @@ class ReaderViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
     
     @objc func handleDone(sender:Any?) {
         self.delegate?.didFinishReader(tag: self.segueIdentifier, codes: Array(self.targets))
+        self.handleClose(sender: sender)
     }
     
     @objc func handleClose(sender:Any?) {
@@ -251,9 +342,9 @@ class ReaderViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
             self.captureSession.stopRunning()
         }
         if self.presentingViewController is UINavigationController {
-            self.dismiss(animated: true, completion: nil)
-        } else {
             self.navigationController?.popViewController(animated: true)
+        } else {
+            self.dismiss(animated: true, completion: nil)
         }
     }
 }
