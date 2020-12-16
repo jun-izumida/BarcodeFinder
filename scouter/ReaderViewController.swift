@@ -12,6 +12,7 @@ import AudioToolbox
 
 protocol ReaderViewControllerDelegate {
     func didFinishReader(tag:String, codes:[String])
+    func didMatchCode(code: String)
 }
 
 class ReaderViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, AVCaptureMetadataOutputObjectsDelegate {
@@ -127,6 +128,7 @@ class ReaderViewController: UIViewController, UICollectionViewDataSource, UIColl
                         }
                     }
                     //AudioServicesPlaySystemSound(1108)
+                    self.handleMatch(code: stringValue)
 
                     if !match.contains(stringValue) {
                         match.insert(stringValue)
@@ -268,17 +270,15 @@ class ReaderViewController: UIViewController, UICollectionViewDataSource, UIColl
     
     func setupOverlayControl() {
         let cancelButton:UIButton = UIButton(frame: CGRect(x: view.bounds.width - 65 , y: 10, width: 60, height: 60))
-        //cancelButton.setImage(UIImage(named: "Close"), for: .normal)
-        cancelButton.setTitle("x", for: .normal)
-        cancelButton.backgroundColor = UIColor.orange
+        cancelButton.setImage(UIImage(named: "Close"), for: .normal)
         cancelButton.addTarget(self, action: #selector(self.handleClose(sender:)), for: .touchUpInside)
         self.view.addSubview(cancelButton)
         
         if self.segueIdentifier == kSegueIdentifier.PREPARE.rawValue {
-            let doneButton:UIButton = UIButton(frame: CGRect(x: view.bounds.width - 65 , y: view.bounds.height - 180, width: 60, height: 60))
-            //doneButton.setImage(UIImage(named: "Done"), for: .normal)
-            doneButton.setTitle("OK", for: .normal)
-            doneButton.backgroundColor = UIColor.blue
+            let doneButton:UIButton = UIButton(frame: CGRect(x: view.bounds.width - 65 , y: view.bounds.height - 100, width: 60, height: 60))
+            doneButton.setImage(UIImage(named: "Done"), for: .normal)
+            //doneButton.setTitle("OK", for: .normal)
+            //doneButton.backgroundColor = UIColor.blue
             doneButton.addTarget(self, action: #selector(self.handleDone(sender:)), for: .touchUpInside)
             self.view.addSubview(doneButton)
         }
@@ -332,12 +332,17 @@ class ReaderViewController: UIViewController, UICollectionViewDataSource, UIColl
         captureSession = nil
     }
     
+    func handleMatch(code:String) {
+        self.delegate?.didMatchCode(code: code)
+    }
+    
     @objc func handleDone(sender:Any?) {
         self.delegate?.didFinishReader(tag: self.segueIdentifier, codes: Array(self.targets))
         self.handleClose(sender: sender)
     }
     
     @objc func handleClose(sender:Any?) {
+        self.delegate?.didFinishReader(tag: self.segueIdentifier, codes:Array(self.targets))
         if (self.captureSession.isRunning == true) {
             self.captureSession.stopRunning()
         }

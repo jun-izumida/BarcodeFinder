@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8F51204F25807F3600B886F5 /* ScouterUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F51204E25807F3600B886F5 /* ScouterUI.swift */; };
+		8F5120542581927F00B886F5 /* SCOUTER.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5120532581927F00B886F5 /* SCOUTER.png */; };
+		8F51205D2586D97600B886F5 /* Done.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F51205C2586D97600B886F5 /* Done.png */; };
+		8F5120602586D97E00B886F5 /* Close.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F51205F2586D97E00B886F5 /* Close.png */; };
 		8F6D9869254FB4B2000E8BD9 /* UITextViewWithDone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F6D9868254FB4B2000E8BD9 /* UITextViewWithDone.swift */; };
 		BF84B614254C3E73005C57E6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF84B613254C3E73005C57E6 /* AppDelegate.swift */; };
 		BF84B616254C3E73005C57E6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF84B615254C3E73005C57E6 /* SceneDelegate.swift */; };
@@ -19,8 +23,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8F51204E25807F3600B886F5 /* ScouterUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScouterUI.swift; sourceTree = "<group>"; };
+		8F5120532581927F00B886F5 /* SCOUTER.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = SCOUTER.png; path = Resources/SCOUTER.png; sourceTree = SOURCE_ROOT; };
+		8F51205C2586D97600B886F5 /* Done.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Done.png; path = Resources/Done.png; sourceTree = SOURCE_ROOT; };
+		8F51205F2586D97E00B886F5 /* Close.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Close.png; path = Resources/Close.png; sourceTree = SOURCE_ROOT; };
 		8F6D9868254FB4B2000E8BD9 /* UITextViewWithDone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextViewWithDone.swift; sourceTree = "<group>"; };
-		BF84B610254C3E73005C57E6 /* BarcodeFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BarcodeFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF84B610254C3E73005C57E6 /* scouter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = scouter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF84B613254C3E73005C57E6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BF84B615254C3E73005C57E6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		BF84B617254C3E73005C57E6 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -43,10 +51,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8F5120522581926000B886F5 /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+				8F51205F2586D97E00B886F5 /* Close.png */,
+				8F51205C2586D97600B886F5 /* Done.png */,
+				8F5120532581927F00B886F5 /* SCOUTER.png */,
+			);
+			path = Resource;
+			sourceTree = "<group>";
+		};
 		BF84B607254C3E73005C57E6 = {
 			isa = PBXGroup;
 			children = (
-				BF84B612254C3E73005C57E6 /* BarcodeFinder */,
+				BF84B612254C3E73005C57E6 /* scouter */,
 				BF84B611254C3E73005C57E6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,14 +72,16 @@
 		BF84B611254C3E73005C57E6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BF84B610254C3E73005C57E6 /* BarcodeFinder.app */,
+				BF84B610254C3E73005C57E6 /* scouter.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		BF84B612254C3E73005C57E6 /* BarcodeFinder */ = {
+		BF84B612254C3E73005C57E6 /* scouter */ = {
 			isa = PBXGroup;
 			children = (
+				8F5120522581926000B886F5 /* Resource */,
+				8F51204E25807F3600B886F5 /* ScouterUI.swift */,
 				BF84B613254C3E73005C57E6 /* AppDelegate.swift */,
 				BF84B629254C4659005C57E6 /* ConstVariables.swift */,
 				BF84B615254C3E73005C57E6 /* SceneDelegate.swift */,
@@ -73,15 +93,15 @@
 				BF84B621254C3E75005C57E6 /* Info.plist */,
 				8F6D9868254FB4B2000E8BD9 /* UITextViewWithDone.swift */,
 			);
-			path = BarcodeFinder;
+			path = scouter;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		BF84B60F254C3E73005C57E6 /* BarcodeFinder */ = {
+		BF84B60F254C3E73005C57E6 /* scouter */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BF84B624254C3E75005C57E6 /* Build configuration list for PBXNativeTarget "BarcodeFinder" */;
+			buildConfigurationList = BF84B624254C3E75005C57E6 /* Build configuration list for PBXNativeTarget "scouter" */;
 			buildPhases = (
 				BF84B60C254C3E73005C57E6 /* Sources */,
 				BF84B60D254C3E73005C57E6 /* Frameworks */,
@@ -91,9 +111,9 @@
 			);
 			dependencies = (
 			);
-			name = BarcodeFinder;
-			productName = BarcodeFinder;
-			productReference = BF84B610254C3E73005C57E6 /* BarcodeFinder.app */;
+			name = scouter;
+			productName = scouter;
+			productReference = BF84B610254C3E73005C57E6 /* scouter.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -111,7 +131,7 @@
 					};
 				};
 			};
-			buildConfigurationList = BF84B60B254C3E73005C57E6 /* Build configuration list for PBXProject "BarcodeFinder" */;
+			buildConfigurationList = BF84B60B254C3E73005C57E6 /* Build configuration list for PBXProject "scouter" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -124,7 +144,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BF84B60F254C3E73005C57E6 /* BarcodeFinder */,
+				BF84B60F254C3E73005C57E6 /* scouter */,
 			);
 		};
 /* End PBXProject section */
@@ -136,7 +156,10 @@
 			files = (
 				BF84B620254C3E75005C57E6 /* LaunchScreen.storyboard in Resources */,
 				BF84B61D254C3E75005C57E6 /* Assets.xcassets in Resources */,
+				8F51205D2586D97600B886F5 /* Done.png in Resources */,
 				BF84B61B254C3E73005C57E6 /* Main.storyboard in Resources */,
+				8F5120602586D97E00B886F5 /* Close.png in Resources */,
+				8F5120542581927F00B886F5 /* SCOUTER.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,6 +173,7 @@
 				BF84B618254C3E73005C57E6 /* ViewController.swift in Sources */,
 				BF84B614254C3E73005C57E6 /* AppDelegate.swift in Sources */,
 				BF84B616254C3E73005C57E6 /* SceneDelegate.swift in Sources */,
+				8F51204F25807F3600B886F5 /* ScouterUI.swift in Sources */,
 				BF84B628254C3E9A005C57E6 /* ReaderViewController.swift in Sources */,
 				BF84B62A254C4659005C57E6 /* ConstVariables.swift in Sources */,
 				8F6D9869254FB4B2000E8BD9 /* UITextViewWithDone.swift in Sources */,
@@ -299,14 +323,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 201209;
 				DEVELOPMENT_TEAM = 8Y23CL2NF6;
-				INFOPLIST_FILE = BarcodeFinder/Info.plist;
+				INFOPLIST_FILE = scouter/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = jo.co.agel.BarcodeFinder;
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = jo.co.agel.scouter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -318,14 +344,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 201209;
 				DEVELOPMENT_TEAM = 8Y23CL2NF6;
-				INFOPLIST_FILE = BarcodeFinder/Info.plist;
+				INFOPLIST_FILE = scouter/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = jo.co.agel.BarcodeFinder;
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = jo.co.agel.scouter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -335,7 +363,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BF84B60B254C3E73005C57E6 /* Build configuration list for PBXProject "BarcodeFinder" */ = {
+		BF84B60B254C3E73005C57E6 /* Build configuration list for PBXProject "scouter" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BF84B622254C3E75005C57E6 /* Debug */,
@@ -344,7 +372,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BF84B624254C3E75005C57E6 /* Build configuration list for PBXNativeTarget "BarcodeFinder" */ = {
+		BF84B624254C3E75005C57E6 /* Build configuration list for PBXNativeTarget "scouter" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BF84B625254C3E75005C57E6 /* Debug */,
