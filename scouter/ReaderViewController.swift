@@ -45,7 +45,9 @@ class ReaderViewController: UIViewController, UICollectionViewDataSource, UIColl
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if (self.captureSession.isRunning == false) {
-            self.captureSession.startRunning()
+            DispatchQueue.global(qos: .background).async {
+                self.captureSession.startRunning()
+            }
         }
     }
     
@@ -210,20 +212,15 @@ class ReaderViewController: UIViewController, UICollectionViewDataSource, UIColl
             captureSession.addOutput(metaDataOutput)
             metaDataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
             metaDataOutput.metadataObjectTypes = [.qr]
-            /*
-            UIGraphicsBeginImageContextWithOptions(UIScreen.main.bounds.size, false, 0.0)
-            self.view.drawHierarchy(in: self.view.bounds, afterScreenUpdates: true)
-            let image:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
-            UIGraphicsEndImageContext()
-            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-            */
         } else {
             failed()
             return
         }
         
         setupPreviewLayer()
-        captureSession.startRunning()
+        DispatchQueue.global(qos: .background).async {
+            self.captureSession.startRunning()
+        }
     }
     
     func setupPreviewLayer() {
@@ -240,36 +237,10 @@ class ReaderViewController: UIViewController, UICollectionViewDataSource, UIColl
         previewLayer.videoGravity = .resizeAspectFill
         previewLayer.connection?.videoOrientation = transformOrientation(orientation: ifOrientation())
         view.layer.addSublayer(previewLayer)
-        /*
-        if READMODE == "M" {
-            let pip = UIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height))
-            pip.backgroundColor = .clear
-           
-            table = UITableView(frame: CGRect(x: 0, y: 0, width: pip.bounds.width, height: pip.bounds.height / 2), style: .plain)
-            table.register(ReaderDataCell.self, forCellReuseIdentifier: "cell")
-            table.backgroundView?.backgroundColor = .clear
-            table.backgroundColor = .clear
-            table.alpha = 0.5
-           
-            table.dataSource = self
-            table.delegate = self
-            table.rowHeight = 34
-            pip.addSubview(table)
-            
-            pipLabel = UILabel(frame: CGRect(x: 20, y: pip.bounds.height - 160, width: pip.frame.width / 2, height: 60))
-            pipLabel.font = UIFont.systemFont(ofSize: 46, weight: .semibold)
-            pipLabel.textColor = UIColor.yellow
-            pipLabel.shadowOffset = CGSize(width: 2, height: 2)
-            pipLabel.shadowColor = UIColor.black
-            pip.addSubview(pipLabel)
-            
-            self.view.addSubview(pip)
-        }
- */
     }
     
     func setupOverlayControl() {
-        let cancelButton:UIButton = UIButton(frame: CGRect(x: view.bounds.width - 65 , y: 10, width: 60, height: 60))
+        let cancelButton:UIButton = UIButton(frame: CGRect(x: view.bounds.width - 65 , y: 20, width: 60, height: 60))
         cancelButton.setImage(UIImage(named: "Close"), for: .normal)
         cancelButton.addTarget(self, action: #selector(self.handleClose(sender:)), for: .touchUpInside)
         self.view.addSubview(cancelButton)
@@ -277,8 +248,6 @@ class ReaderViewController: UIViewController, UICollectionViewDataSource, UIColl
         if self.segueIdentifier == kSegueIdentifier.PREPARE.rawValue {
             let doneButton:UIButton = UIButton(frame: CGRect(x: view.bounds.width - 65 , y: view.bounds.height - 100, width: 60, height: 60))
             doneButton.setImage(UIImage(named: "Done"), for: .normal)
-            //doneButton.setTitle("OK", for: .normal)
-            //doneButton.backgroundColor = UIColor.blue
             doneButton.addTarget(self, action: #selector(self.handleDone(sender:)), for: .touchUpInside)
             self.view.addSubview(doneButton)
         }

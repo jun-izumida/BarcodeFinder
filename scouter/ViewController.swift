@@ -26,6 +26,8 @@ class ViewController: UIViewController, UITextViewDelegate, ReaderViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
+        overrideUserInterfaceStyle = .light
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
