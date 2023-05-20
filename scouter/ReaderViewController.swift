@@ -27,6 +27,7 @@ class ReaderViewController: UIViewController, UICollectionViewDataSource, UIColl
     var captureSession: AVCaptureSession!
     var previewLayer: AVCaptureVideoPreviewLayer!
     var markers: UIView! = UIView()
+    var countLabel: UILabel = UILabel()
     var isPlaying:Bool = false
     
     override func viewDidLoad() {
@@ -69,7 +70,6 @@ class ReaderViewController: UIViewController, UICollectionViewDataSource, UIColl
     }
         
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("ABC")
         view.endEditing(true)
     }
     
@@ -105,16 +105,17 @@ class ReaderViewController: UIViewController, UICollectionViewDataSource, UIColl
         for obj in metadataObjects {
             guard let readableObject = obj as? AVMetadataMachineReadableCodeObject else { continue }
             guard let stringValue = readableObject.stringValue else { continue }
-                        
+            
             switch segueIdentifier {
             case kSegueIdentifier.PREPARE.rawValue:
                 let symbol = self.previewLayer.transformedMetadataObject(for: readableObject) as! AVMetadataMachineReadableCodeObject
                 if targets.contains(stringValue) {
                     markers.addSubview(self.marker(value: stringValue, frame: symbol.bounds, isFill:true))
-                 } else {
+                } else {
                     markers.addSubview(self.marker(value: stringValue, frame: symbol.bounds, isFill:false))
                     targets.insert(stringValue)
-                 }
+                    self.countLabel.text = String(targets.count)
+                }
                 break
             case kSegueIdentifier.FINDER.rawValue:
                 let symbol = self.previewLayer.transformedMetadataObject(for: readableObject) as! AVMetadataMachineReadableCodeObject
@@ -134,6 +135,7 @@ class ReaderViewController: UIViewController, UICollectionViewDataSource, UIColl
 
                     if !match.contains(stringValue) {
                         match.insert(stringValue)
+                        self.countLabel.text = String(match.count)
                         /*
                         UIGraphicsBeginImageContextWithOptions(UIScreen.main.bounds.size, false, 0.0)
                         self.view.drawHierarchy(in: self.view.bounds, afterScreenUpdates: true)
@@ -237,6 +239,18 @@ class ReaderViewController: UIViewController, UICollectionViewDataSource, UIColl
         previewLayer.videoGravity = .resizeAspectFill
         previewLayer.connection?.videoOrientation = transformOrientation(orientation: ifOrientation())
         view.layer.addSublayer(previewLayer)
+        
+        countLabel.layer.position = CGPoint(x: 40, y: 40)
+        countLabel.frame.size = CGSize(width: 60, height: 60)
+        countLabel.text = "0"
+        countLabel.backgroundColor = UIColor.white
+        countLabel.textAlignment = NSTextAlignment.center
+        countLabel.font = UIFont.boldSystemFont(ofSize: 40.0)
+        countLabel.textColor = UIColor.magenta
+        countLabel.alpha = 0.8
+        countLabel.layer.cornerRadius = 10
+        countLabel.clipsToBounds = true
+        view.layer.addSublayer(countLabel.layer)
     }
     
     func setupOverlayControl() {
